@@ -1,0 +1,77 @@
+# Git
+.git
+.gitignore
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.pytest_cache
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+
+# Node modules (if any)
+node_modules/
+
+# Documentation
+*.md
+docs/
+
+# Docker volumes
+docker-volumes/
+
+# Results and uploads (will be mounted as volumes)
+results/
+uploads/
+temp/
+
+# SadTalker repository (will be cloned during build)
+SadTalker/
+
+# Model checkpoints (will be downloaded at runtime)
+checkpoints/
+*.pth
+*.ckpt
+*.safetensors
+
+# Large media files
+*.mp4
+*.avi
+*.mov
+*.wav
+*.mp3
+*.jpg
+*.jpeg
+*.png
+*.gif

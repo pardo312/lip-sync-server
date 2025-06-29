@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  sadtalker-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sadtalker-fastapi
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persistent model storage
+      - ./docker-volumes/checkpoints:/app/SadTalker/checkpoints
+      - ./docker-volumes/gfpgan-weights:/app/SadTalker/gfpgan/weights
+      # Upload and result directories
+      - ./docker-volumes/uploads:/app/uploads
+      - ./docker-volumes/results:/app/results
+      - ./docker-volumes/temp:/app/temp
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - PYTHONUNBUFFERED=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - sadtalker-network
+
+networks:
+  sadtalker-network:
+    driver: bridge
+
+volumes:
+  checkpoints:
+  gfpgan-weights:
+  uploads:
+  results:
+  temp:
