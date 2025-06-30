@@ -34,7 +34,7 @@ RUN python3.8 -m pip install --upgrade pip setuptools wheel
 RUN git clone https://github.com/OpenTalker/SadTalker.git /app/SadTalker
 
 # Add SadTalker to Python path and set SadTalker path
-ENV PYTHONPATH="/app/SadTalker:${PYTHONPATH}"
+ENV PYTHONPATH="/app/SadTalker"
 ENV SADTALKER_PATH="/app/SadTalker"
 
 # Install SadTalker requirements
