@@ -6,9 +6,7 @@ import logging
 from typing import Optional
 from pathlib import Path
 
-# Add the parent directory to the Python path to import SadTalker modules
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-
+# Import SadTalker - PYTHONPATH is set in Dockerfile to include /app/SadTalker
 from src.gradio_demo import SadTalker
 
 logger = logging.getLogger(__name__)
@@ -34,9 +32,10 @@ class SadTalkerService:
                 self.device = "cpu"
                 logger.info("Using CPU for inference")
             
-            # Initialize SadTalker with paths relative to the project root
-            checkpoint_path = os.path.join(os.path.dirname(__file__), '..', '..', 'checkpoints')
-            config_path = os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'config')
+            # Initialize SadTalker with paths from environment variables
+            sadtalker_base = os.getenv('SADTALKER_PATH', '/app/SadTalker')
+            checkpoint_path = os.path.join(sadtalker_base, 'checkpoints')
+            config_path = os.path.join(sadtalker_base, 'src', 'config')
             
             # Ensure paths exist
             if not os.path.exists(checkpoint_path):
