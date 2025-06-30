@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 import uvicorn
 import os
 import uuid
@@ -21,21 +22,6 @@ from utils.validation import validate_image, validate_audio
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(
-    title="SadTalker API",
-    description="AI-powered talking head video generation API",
-    version="1.0.0"
-)
-
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 # Initialize services
 sadtalker_service = SadTalkerService()
 file_handler = FileHandler()
@@ -43,9 +29,10 @@ file_handler = FileHandler()
 # In-memory task storage (in production, use Redis or database)
 tasks = {}
 
-@app.on_startup
-async def startup_event():
-    """Initialize the application on startup"""
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Manage application lifespan events"""
+    # Startup
     logger.info("Starting SadTalker API...")
     
     # Create necessary directories
@@ -56,6 +43,27 @@ async def startup_event():
     # Initialize SadTalker service
     await sadtalker_service.initialize()
     logger.info("SadTalker API started successfully!")
+    
+    yield
+    
+    # Shutdown
+    logger.info("Shutting down SadTalker API...")
+
+app = FastAPI(
+    title="SadTalker API",
+    description="AI-powered talking head video generation API",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/", response_model=dict)
 async def root():
