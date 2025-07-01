@@ -43,4 +43,5 @@ cd /app
 
 # Start the FastAPI application
 echo "Starting FastAPI application..."
-exec python main.py
+exec uvicorn main:app --host 0.0.0.0 --port 8000 --log-level info --access-log
+
